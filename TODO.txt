@@ -1,0 +1,39 @@
+CHANGELOG
+
+January 11, 2011
+
+-	Moved buttons to icons in Utilities block
+-	Added plugins for Storage and WebGL
+-	Added Canvas support for IE (using excanvas)
+-	Non-webGL enabled browsers are not able to click the render icon
+
+January 9, 2011
+
+-	Fixed Steps going to 2x (initialized appears to be a reserved YUI3 attribute) (11)
+-	Added two state type (8)
+-	Added Step block (6)
+
+January 7, 2011
+
+-	Added Dirt (special case since top is grass, and other sides is dirt) (6)
+
+January 6, 2011
+
+-	Added "ghost" of previous levels.  This will allow for easier 3D drawing (1)
+-	Added right-click erase support (3)
+-	Fixed drawing overtop issue that happens now with rail tracks  (4)
+
+TODO
+
+1.  Add "ghost" of previous levels.  This will allow for easier 3D drawing 
+2.	Improve switching between levels
+3.	Add right-click erase support 
+4.	Fix drawing overtop issue that happens now with rail tracks 
+5.	If we draw over the ghost, then remove it, the ghost should still be there (ideally)
+6.	Add remainder of blocks
+7.	Tweak icons on graph paper
+8.	Add two state type
+9.	Add N-state type (specifically to handle all the different types of rails)
+10.	Double-click erase doesn't let levels switch anymore
+11.	Steps are going 2x when switching levels (is fine on load of page)
+12.	Allow resizeable canvas.

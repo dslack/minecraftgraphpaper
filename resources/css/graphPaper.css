@@ -1,0 +1,79 @@
+	div.yui3-graphpaper {
+		height:100%;
+		}
+	
+	div.graph-button-container {
+		height: 140px;
+		clear:both;
+	}
+	
+	div.blocks {
+		width: 200px;
+		height:120px;
+		border: 1px solid black;
+		float:left;
+		margin:5px;
+		padding:2px;
+	}
+	
+	div.blocks label {
+		height: 20px;
+		display:block;
+		font-size:1.2em;
+		text-align:center;
+		background-color:grey;
+		color:#FFF;
+	}
+		
+	ul {
+		height: 98px;
+		list-style-type: none;
+		display:block;
+		border: 1px solid grey;
+	}
+	
+	ul li a {
+		float: left;
+		display:block;
+		height :24px;
+		width: 24px;
+		padding:5px;
+	}
+	
+	ul li a img {
+		display:block;
+		padding:1px;
+		width: 24px;
+		height:24px
+	}
+	
+	ul li a img:hover {
+		margin:-1px;
+		border:1px solid red;
+	}
+	
+	ul li a.selected img {
+		margin:-2px;
+		border:2px solid green;
+	}		
+	
+	#graphPaper {
+		margin:auto;
+		text-align:center;
+		overflow:scroll;
+		height: 600px;
+	}
+	
+	#canvas {
+		width: 1000px;
+		height: 1000px;
+		cursor: default;
+		margin:auto;
+	}
+	
+	#graphPaper {
+		float:left;
+	}
+	#sliderContainer {
+		float:left;
+	}

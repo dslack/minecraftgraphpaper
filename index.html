@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<!--[if IE]>
+<script src="resources/js/excanvas/excanvas.compiled.js"></script>
+
+<![endif]-->
+
+
+ 
+ <!-- CSS -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?3.3.0/build/widget/assets/skins/sam/widget.css">
+<!-- JS -->
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/oop/oop-min.js&3.3.0/build/event-custom/event-custom-min.js&3.3.0/build/event/event-base-min.js&3.3.0/build/pluginhost/pluginhost-min.js&3.3.0/build/dom/dom-min.js&3.3.0/build/dom/dom-style-ie-min.js&3.3.0/build/node/node-min.js&3.3.0/build/event/event-delegate-min.js&3.3.0/build/attribute/attribute-min.js&3.3.0/build/event/event-synthetic-min.js&3.3.0/build/event/event-focus-min.js&3.3.0/build/base/base-base-min.js&3.3.0/build/base/base-pluginhost-min.js&3.3.0/build/classnamemanager/classnamemanager-min.js&3.3.0/build/widget/widget-min.js&3.3.0/build/plugin/plugin-min.js&3.3.0/build/dump/dump-min.js&3.3.0/build/substitute/substitute-min.js"></script>
+ 
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.3.0/build/cssreset/reset-min.css">
+
+<link rel="stylesheet" type="text/css" href="resources/css/graphPaper.css">
+
+</head>
+<body class="yui3-skin-sam">
+<div class="body">
+	<div id="debug"></div>
+	<div id="graphPaper">
+		<canvas id="canvas"></canvas>  
+	</div>
+	<div id="sliderContainer">
+		Level: <input type="text" readonly="true" id="sliderVal" value="1"/>
+		<div id="slider">
+		</div>
+	</div>
+</div>
+
+<script>
+(function() {
+	var config = {
+		modules: {
+			graphPaper: {
+				fullpath: './resources/js/GraphPaper.js',
+				requires: ['widget', 'json']
+			},
+			minecraftPlugin: {
+				fullpath: "./resources/js/MinecraftPlugin.js",
+				requires: ['substitute', 'plugin']
+			},
+			saveGraphPlugin: {
+				fullpath: "./resources/js/SaveGraphPlugin.js",
+				requires: ['substitute', 'plugin']
+			},
+			storageGraphPlugin: {
+				fullpath: "./resources/js/StorageGraphPlugin.js",
+				requires: ['substitute', 'plugin']
+			},
+			webGLGraphPlugin: {
+				fullpath: "./resources/js/WebGLGraphPlugin.js",
+				requires: ['substitute', 'plugin']
+			}
+		}
+	};
+	
+	YUI(config).use("node", 'graphPaper', 'minecraftPlugin', "saveGraphPlugin",'storageGraphPlugin', 'webGLGraphPlugin',"slider", function(Y) {
+		
+		var graphPaperArr = Y.slack.StorageGraphPlugin.initGraphPaperStorage();
+		
+		var level = 1;
+		var gp = null;
+	
+		function init() {
+			
+			gp = new Y.slack.GraphPaper({srcNode:"#graphPaper"});
+			gp.plug(Y.slack.SaveGraphPlugin);
+			gp.plug(Y.slack.StorageGraphPlugin, {level: level, graphPaper: graphPaperArr});
+			gp.plug(Y.slack.WebGLGraphPlugin);
+			gp.plug(Y.slack.MinecraftPlugin);
+
+			
+			gp.on('eraseAllEvent', function(e) {
+				gp.storage.erase();
+			});
+			gp.storage.on('clearStorageEvent', function(e) {
+				gp.minecraft._eraseAll();
+			});
+			
+			var obj = transformGraphPaper(graphPaperArr[level-1]);
+			gp.set("boxes", obj);
+			gp.render();				
+		}	
+
+		
+		function transformGraphPaper(graphPaper){
+				var obj = Y.JSON.parse(graphPaper)
+				//Lets transform each box object, with the correct function type...
+				Y.Object.each(obj, function(val, key, obj) {
+					val.type = gp.minecraft.getType(val.type);
+				}, this);
+				return obj;
+		}
+		
+		var slider = new Y.Slider({axis:"Y", length:400, value: 1,min:64, max:1});
+		slider.render("#slider");
+
+		slider.on("valueChange", handleSlider);
+
+		function handleSlider(e) {
+			var ghostData;
+			
+			Y.one("#sliderVal").set("value", e.newVal);
+						
+			//Ghost data stored..
+			level = e.newVal;
+			//set level in StorageGraphPlugin...
+			gp.storage.set("level", level);
+			
+				
+			if (level > 1) {
+				 ghostData = graphPaperArr[level-2];
+			}
+			
+			//we want to save whats in localstorage at the new level...
+			var currData = graphPaperArr[level-1];
+					
+			gp.minecraft._clear();
+			//now, lets reload the data back into the graphpaper...
+			
+			if (ghostData) {
+				gp.minecraft.addGhostData(transformGraphPaper(ghostData));
+			}
+			gp.minecraft.populate(transformGraphPaper(currData));
+		}
+	
+		Y.on('domready', init);
+
+	});
+}());
+
+ </script>
+
+</body>
+</html>
